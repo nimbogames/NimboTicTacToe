@@ -1,71 +1,58 @@
 const socket = io();
-const joinForm = document.getElementById('joinForm');
-const roomInput = document.getElementById('roomInput');
-const board = document.getElementById('board');
-const status = document.getElementById('status');
-const error = document.getElementById('error');
-const cells = document.querySelectorAll('.cell');
-const restartBtn = document.getElementById('restartBtn');
-
-let playerSymbol = '';
+let symbol = '';
 let myTurn = false;
 
-joinForm.addEventListener('submit', (e) => {
-    e.preventDefault();
-    const roomId = roomInput.value.trim();
-    if (roomId) {
-        socket.emit('joinRoom', roomId);
+const board = document.getElementById('board');
+const status = document.getElementById('status');
+
+// Create board
+for (let i = 0; i < 9; i++) {
+  const cell = document.createElement('div');
+  cell.classList.add('cell');
+  cell.dataset.index = i;
+  cell.addEventListener('click', () => {
+    if (myTurn && cell.textContent === '') {
+      cell.textContent = symbol;
+      socket.emit('makeMove', {
+        index: i,
+        symbol: symbol
+      });
+      myTurn = false;
+      updateStatus("Opponent's turn");
     }
-});
-
-socket.on('roomJoined', (symbol) => {
-    playerSymbol = symbol;
-    joinForm.style.display = 'none';
-    board.style.display = 'grid';
-    status.textContent = 'Waiting for opponent...';
-});
-
-socket.on('startGame', (symbol) => {
-    myTurn = (playerSymbol === symbol);
-    updateStatus();
-});
-
-socket.on('gameUpdate', ({ board: serverBoard, currentTurn }) => {
-    serverBoard.forEach((value, i) => {
-        cells[i].textContent = value || '';
-    });
-    myTurn = (playerSymbol === currentTurn);
-    updateStatus();
-});
-
-socket.on('gameOver', (result) => {
-    status.textContent = result;
-    myTurn = false;
-    restartBtn.style.display = 'inline-block';
-});
-
-socket.on('errorMessage', (msg) => {
-    error.textContent = msg;
-});
-
-restartBtn.addEventListener('click', () => {
-    socket.emit('restartGame');
-});
-
-socket.on('restartGame', () => {
-    cells.forEach(cell => cell.textContent = '');
-    status.textContent = 'Game restarted. Waiting for opponent...';
-    restartBtn.style.display = 'none';
-});
-
-cells.forEach((cell, i) => {
-    cell.addEventListener('click', () => {
-        if (myTurn && cell.textContent === '') {
-            socket.emit('makeMove', i);
-        }
-    });
-});
-
-function updateStatus() {
-    status.textContent = myTurn ? 'Your turn!' : 'Opponent\'s turn';
+  });
+  board.appendChild(cell);
 }
+
+function updateStatus(message) {
+  status.textContent = message;
+}
+
+socket.on('symbol', (sym) => {
+  symbol = sym;
+  updateStatus('You are ' + symbol);
+});
+
+socket.on('startGame', () => {
+  if (symbol === 'X') {
+    myTurn = true;
+    updateStatus("Your turn");
+  } else {
+    updateStatus("Opponent's turn");
+  }
+});
+
+socket.on('moveMade', (data) => {
+  const cell = document.querySelector(`.cell[data-index='${data.index}']`);
+  if (cell.textContent === '') {
+    cell.textContent = data.symbol;
+    if (data.symbol !== symbol) {
+      myTurn = true;
+      updateStatus("Your turn");
+    }
+  }
+});
+
+socket.on('playerLeft', () => {
+  updateStatus('Opponent left. Waiting for player...');
+});
