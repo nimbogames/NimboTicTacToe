@@ -1,0 +1,135 @@
+/* General Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Poppins', sans-serif;
+}
+
+/* Body */
+body {
+    height: 100vh;
+    background: linear-gradient(to right, #4facfe, #00f2fe);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    flex-direction: column;
+}
+
+/* Game Container */
+#gameContainer {
+    background: #ffffff;
+    padding: 20px 30px;
+    border-radius: 15px;
+    box-shadow: 0 10px 25px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    width: 320px;
+}
+
+/* Heading */
+h1 {
+    margin-bottom: 20px;
+    font-size: 28px;
+    color: #333;
+}
+
+/* Room Join Form */
+#joinForm {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    margin-bottom: 20px;
+}
+
+#joinForm input {
+    padding: 10px;
+    border-radius: 8px;
+    border: 1px solid #ccc;
+    font-size: 16px;
+}
+
+#joinForm button {
+    padding: 10px;
+    background: #00c6ff;
+    border: none;
+    border-radius: 8px;
+    color: white;
+    font-size: 18px;
+    cursor: pointer;
+    transition: background 0.3s ease;
+}
+
+#joinForm button:hover {
+    background: #0072ff;
+}
+
+/* Game Board */
+#board {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 10px;
+    margin-top: 20px;
+}
+
+
+.cell {
+    width: 80px;
+    height: 80px;
+    background: #f0f0f0;
+    border-radius: 10px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 32px;
+    font-weight: bold;
+    color: #333;
+    cursor: pointer;
+    transition: background 0.2s ease;
+}
+
+.cell:hover {
+    background: #d3e0ea;
+}
+
+/* Status Text */
+#status {
+    margin-top: 15px;
+    font-size: 20px;
+    color: #333;
+}
+
+/* Error Message */
+#error {
+    color: red;
+    font-size: 16px;
+    margin-top: 10px;
+}
+
+/* Restart Button */
+#restartBtn {
+    margin-top: 20px;
+    padding: 10px 20px;
+    background: #ff5858;
+    color: white;
+    border: none;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 18px;
+    display: none;
+    transition: background 0.3s ease;
+}
+
+#restartBtn:hover {
+    background: #ff1e56;
+}
+
+/* Responsive */
+@media (max-width: 400px) {
+    #gameContainer {
+        width: 90%;
+    }
+    .cell {
+        width: 70px;
+        height: 70px;
+    }
+}
